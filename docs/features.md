@@ -25,3 +25,5 @@
 - remittance_text: unstructured text, excluded from the initial scope
 - fraud_type: direct target leakage
 - is_fraud: prediction target
+- beneficiary_country: excluded because SynSEPA contains unrealistically strong country/fraud correlations
+- country_type: excluded because SynSEPA contains unrealistically strong geographic/fraud correlations
