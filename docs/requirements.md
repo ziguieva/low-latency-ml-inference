@@ -11,6 +11,18 @@ SynSEPA dataset:
 - `synsep_full_dataset.csv`: main transaction dataset
 - `accounts.csv`: complementary account-level information
 
+### Dataset period
+
+The SynSEPA transaction data covers:
+
+- Start: 2024-01-01
+- End: 2024-12-31
+- Transactions: 1,839,560
+- Fraud cases: 7,112
+- Fraud rate: 0.3866%
+
+Although the initial preference was for 2025+ data, the 2024 SynSEPA dataset is accepted because of its realistic European SEPA structure and sufficient volume for low-latency inference benchmarking.
+
 ## Input
 
 A single banking transaction represented by numerical and categorical features.
