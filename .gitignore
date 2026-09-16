@@ -34,3 +34,4 @@ cmake-build-*/
 
 # Environment variables
 .env
+benchmarks/*.bin
