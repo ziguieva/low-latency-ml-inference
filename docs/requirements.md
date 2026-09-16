@@ -6,7 +6,10 @@ Real-time fraud detection for European banking transactions.
 
 ## Dataset
 
-SynSEPA transaction dataset.
+SynSEPA dataset:
+
+- `synsep_full_dataset.csv`: main transaction dataset
+- `accounts.csv`: complementary account-level information
 
 ## Input
 
