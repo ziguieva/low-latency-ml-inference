@@ -1,0 +1,36 @@
+# Python
+__pycache__/
+*.py[cod]
+*.egg-info/
+
+# Virtual environment
+.venv/
+
+# IDE / OS
+.vscode/
+.DS_Store
+
+# Raw and processed datasets
+data/raw/*
+!data/raw/.gitkeep
+
+data/processed/*
+!data/processed/.gitkeep
+
+# Models
+models/*
+!models/.gitkeep
+
+# Benchmark outputs
+benchmarks/*.csv
+benchmarks/*.json
+
+# Build files
+build/
+cmake-build-*/
+
+# Logs
+*.log
+
+# Environment variables
+.env
