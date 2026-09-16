@@ -26,6 +26,7 @@ find_library(
     REQUIRED
 )
 
+# Step 26 - ONNX Runtime smoke test
 add_executable(
     onnx_smoke_test
     src/onnx_smoke_test.cpp
@@ -39,6 +40,24 @@ target_include_directories(
 
 target_link_libraries(
     onnx_smoke_test
+    PRIVATE
+    "${ONNXRUNTIME_LIBRARY}"
+)
+
+# Step 27 - ONNX inference
+add_executable(
+    inference
+    src/inference.cpp
+)
+
+target_include_directories(
+    inference
+    PRIVATE
+    "${ONNXRUNTIME_INCLUDE_DIR}"
+)
+
+target_link_libraries(
+    inference
     PRIVATE
     "${ONNXRUNTIME_LIBRARY}"
 )
