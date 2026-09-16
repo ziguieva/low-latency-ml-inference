@@ -6,8 +6,6 @@ from sklearn.preprocessing import OneHotEncoder, StandardScaler
 
 CATEGORICAL_FEATURES = [
     "persona",
-    "beneficiary_country",
-    "country_type",
     "remittance_category",
 ]
 

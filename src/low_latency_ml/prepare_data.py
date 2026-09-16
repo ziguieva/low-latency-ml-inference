@@ -8,8 +8,6 @@ OUTPUT_DIR = Path("data/processed")
 
 FEATURES = [
     "persona",
-    "beneficiary_country",
-    "country_type",
     "amount",
     "remittance_category",
     "hour_of_day",

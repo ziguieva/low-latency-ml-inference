@@ -5,8 +5,6 @@
 The following features are encoded using one-hot encoding:
 
 - persona
-- beneficiary_country
-- country_type
 - remittance_category
 
 Unknown categories must be ignored during inference.
