@@ -57,3 +57,24 @@ The implementations will be compared using:
 - Apple Silicon M3
 - Batch size = 1 for low-latency benchmarking
 - Same model and same input data for all implementations
+
+## Temporal Split Strategy
+
+The dataset is split chronologically to avoid information leakage.
+
+- Train: January 2024 -> June 2024
+- Validation: July 2024 -> August 2024
+- Standard Test: September 2024 -> November 2024
+- Drift Test: December 2024
+
+December is isolated because the fraud distribution changes significantly.
+
+From January to November, observed fraud cases are exclusively of type `romance`.
+
+In December, new fraud types appear:
+
+- CEO fraud
+- Impersonation fraud
+- Invoice fraud
+
+The `fraud_type` column is used only for dataset analysis and must never be used as a model feature.
