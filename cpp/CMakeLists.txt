@@ -95,3 +95,41 @@ target_link_libraries(
     PRIVATE
     "${ONNXRUNTIME_LIBRARY}"
 )
+
+set(
+    NLOHMANN_JSON_ROOT
+    "/opt/homebrew/opt/nlohmann-json"
+    CACHE PATH
+    "nlohmann-json installation directory"
+)
+
+find_path(
+    NLOHMANN_JSON_INCLUDE_DIR
+    nlohmann/json.hpp
+    PATHS "${NLOHMANN_JSON_ROOT}/include"
+    REQUIRED
+)
+
+add_library(
+    preprocessor
+    STATIC
+    src/preprocessor.cpp
+)
+
+target_include_directories(
+    preprocessor
+    PUBLIC
+    "${CMAKE_CURRENT_SOURCE_DIR}/include"
+    "${NLOHMANN_JSON_INCLUDE_DIR}"
+)
+
+add_executable(
+    preprocessor_smoke_test
+    src/preprocessor_smoke_test.cpp
+)
+
+target_link_libraries(
+    preprocessor_smoke_test
+    PRIVATE
+    preprocessor
+)
