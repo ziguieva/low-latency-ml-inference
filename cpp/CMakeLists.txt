@@ -61,3 +61,20 @@ target_link_libraries(
     PRIVATE
     "${ONNXRUNTIME_LIBRARY}"
 )
+
+add_executable(
+    benchmark_cpp
+    src/benchmark.cpp
+)
+
+target_include_directories(
+    benchmark_cpp
+    PRIVATE
+    "${ONNXRUNTIME_INCLUDE_DIR}"
+)
+
+target_link_libraries(
+    benchmark_cpp
+    PRIVATE
+    "${ONNXRUNTIME_LIBRARY}"
+)
