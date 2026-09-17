@@ -65,3 +65,31 @@ Dataset loading, contract loading, and model initialization are excluded from th
 | Throughput | 477,816 inf/s | 446,667 inf/s |
 
 The native preprocessing and tensor preparation add approximately 0.146 µs to the mean latency, corresponding to about 7% overhead compared with ONNX Runtime inference alone.
+
+## Native C++ Preprocessing Microbenchmark
+
+The native preprocessing stage was benchmarked independently on the same 50,000 raw transactions used for the end-to-end benchmark.
+
+Because a single transformation is extremely short, each transaction was transformed 100 times inside the timed block and the measured duration was divided by 100.
+
+Three consecutive runs produced:
+
+| Run | Mean | P50 | P95 | P99 |
+|---|---:|---:|---:|---:|
+| 1 | 0.013 µs | 0.012 µs | 0.016 µs | 0.018 µs |
+| 2 | 0.012 µs | 0.011 µs | 0.014 µs | 0.015 µs |
+| 3 | 0.011 µs | 0.011 µs | 0.013 µs | 0.015 µs |
+
+A representative preprocessing cost of approximately **0.012 µs (12 ns)** is therefore used as an order-of-magnitude result.
+
+Compared directly with the 2.239 µs end-to-end mean latency, native preprocessing represents roughly **0.5%** of the complete C++ inference path.
+
+### Latency Breakdown
+
+| Stage | Mean latency |
+|---|---:|
+| ONNX Runtime C++ inference only | 2.093 µs |
+| Native C++ preprocessing only | ~0.012 µs |
+| Complete C++ end-to-end path | 2.239 µs |
+
+The individual benchmarks were measured separately and should not be treated as perfectly additive. The remaining difference between inference-only and end-to-end latency includes tensor construction, runtime call-boundary overhead, result handling, and normal benchmark variability.
