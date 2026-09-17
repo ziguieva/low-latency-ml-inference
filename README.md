@@ -1,8 +1,11 @@
 # Low-Latency ML Inference
 
-End-to-end machine-learning inference benchmark comparing Python and native C++ for a realistic fraud-detection workload.
+[![CI](https://github.com/ziguieva/low-latency-ml-inference/actions/workflows/ci.yml/badge.svg)](https://github.com/ziguieva/low-latency-ml-inference/actions/workflows/ci.yml)
+![Python](https://img.shields.io/badge/Python-3.11-blue)
+![C++](https://img.shields.io/badge/C%2B%2B-17-blue)
+![CMake](https://img.shields.io/badge/CMake-3.20%2B-blue)
 
-The project covers the complete path from data preparation and model training to ONNX export, numerical validation, native C++ preprocessing, and microsecond-level inference benchmarking.
+End-to-end machine-learning inference benchmark comparing Python and native C++ for a realistic fraud-detection workload.
 
 ---
 
