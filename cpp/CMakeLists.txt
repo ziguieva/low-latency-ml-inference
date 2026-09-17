@@ -133,3 +133,21 @@ target_link_libraries(
     PRIVATE
     preprocessor
 )
+
+add_executable(
+    inference_end_to_end
+    src/inference_end_to_end.cpp
+)
+
+target_include_directories(
+    inference_end_to_end
+    PRIVATE
+    "${ONNXRUNTIME_INCLUDE_DIR}"
+)
+
+target_link_libraries(
+    inference_end_to_end
+    PRIVATE
+    preprocessor
+    "${ONNXRUNTIME_LIBRARY}"
+)
