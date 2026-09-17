@@ -4,111 +4,167 @@ project(low_latency_ml_cpp LANGUAGES CXX)
 
 set(CMAKE_CXX_STANDARD 17)
 set(CMAKE_CXX_STANDARD_REQUIRED ON)
+set(CMAKE_CXX_EXTENSIONS OFF)
+
+
+# ---------------------------------------------------------
+# Optional installation hints
+# ---------------------------------------------------------
 
 set(
     ONNXRUNTIME_ROOT
-    "/opt/homebrew/opt/onnxruntime"
+    ""
     CACHE PATH
-    "ONNX Runtime installation directory"
+    "Optional ONNX Runtime installation directory"
 )
+
+set(
+    NLOHMANN_JSON_ROOT
+    ""
+    CACHE PATH
+    "Optional nlohmann-json installation directory"
+)
+
+
+# ---------------------------------------------------------
+# Homebrew fallback
+# ---------------------------------------------------------
+
+find_program(
+    HOMEBREW_EXECUTABLE
+    brew
+)
+
+if(HOMEBREW_EXECUTABLE)
+
+    if(NOT ONNXRUNTIME_ROOT)
+        execute_process(
+            COMMAND
+                "${HOMEBREW_EXECUTABLE}"
+                --prefix
+                onnxruntime
+            RESULT_VARIABLE
+                ONNXRUNTIME_BREW_RESULT
+            OUTPUT_VARIABLE
+                ONNXRUNTIME_BREW_PREFIX
+            OUTPUT_STRIP_TRAILING_WHITESPACE
+            ERROR_QUIET
+        )
+
+        if(ONNXRUNTIME_BREW_RESULT EQUAL 0)
+            set(
+                ONNXRUNTIME_ROOT
+                "${ONNXRUNTIME_BREW_PREFIX}"
+            )
+        endif()
+    endif()
+
+
+    if(NOT NLOHMANN_JSON_ROOT)
+        execute_process(
+            COMMAND
+                "${HOMEBREW_EXECUTABLE}"
+                --prefix
+                nlohmann-json
+            RESULT_VARIABLE
+                NLOHMANN_BREW_RESULT
+            OUTPUT_VARIABLE
+                NLOHMANN_BREW_PREFIX
+            OUTPUT_STRIP_TRAILING_WHITESPACE
+            ERROR_QUIET
+        )
+
+        if(NLOHMANN_BREW_RESULT EQUAL 0)
+            set(
+                NLOHMANN_JSON_ROOT
+                "${NLOHMANN_BREW_PREFIX}"
+            )
+        endif()
+    endif()
+
+endif()
+
+
+# ---------------------------------------------------------
+# ONNX Runtime
+# ---------------------------------------------------------
 
 find_path(
     ONNXRUNTIME_INCLUDE_DIR
-    onnxruntime_cxx_api.h
-    PATHS "${ONNXRUNTIME_ROOT}/include/onnxruntime"
+    NAMES
+        onnxruntime_cxx_api.h
+    HINTS
+        "${ONNXRUNTIME_ROOT}"
+        "$ENV{ONNXRUNTIME_ROOT}"
+    PATH_SUFFIXES
+        include/onnxruntime
+        include
     REQUIRED
 )
 
 find_library(
     ONNXRUNTIME_LIBRARY
-    NAMES onnxruntime
-    PATHS "${ONNXRUNTIME_ROOT}/lib"
+    NAMES
+        onnxruntime
+    HINTS
+        "${ONNXRUNTIME_ROOT}"
+        "$ENV{ONNXRUNTIME_ROOT}"
+    PATH_SUFFIXES
+        lib
     REQUIRED
 )
 
-# Step 26 - ONNX Runtime smoke test
-add_executable(
-    onnx_smoke_test
-    src/onnx_smoke_test.cpp
+
+add_library(
+    onnxruntime_external
+    INTERFACE
 )
 
 target_include_directories(
-    onnx_smoke_test
-    PRIVATE
+    onnxruntime_external
+    INTERFACE
     "${ONNXRUNTIME_INCLUDE_DIR}"
 )
 
 target_link_libraries(
-    onnx_smoke_test
-    PRIVATE
+    onnxruntime_external
+    INTERFACE
     "${ONNXRUNTIME_LIBRARY}"
 )
 
-# Step 27 - ONNX inference
-add_executable(
-    inference
-    src/inference.cpp
-)
 
-target_include_directories(
-    inference
-    PRIVATE
-    "${ONNXRUNTIME_INCLUDE_DIR}"
-)
-
-target_link_libraries(
-    inference
-    PRIVATE
-    "${ONNXRUNTIME_LIBRARY}"
-)
-
-add_executable(
-    benchmark_cpp
-    src/benchmark.cpp
-)
-
-target_include_directories(
-    benchmark_cpp
-    PRIVATE
-    "${ONNXRUNTIME_INCLUDE_DIR}"
-)
-
-target_link_libraries(
-    benchmark_cpp
-    PRIVATE
-    "${ONNXRUNTIME_LIBRARY}"
-)
-
-add_executable(
-    memory_benchmark_cpp
-    src/memory_benchmark.cpp
-)
-
-target_include_directories(
-    memory_benchmark_cpp
-    PRIVATE
-    "${ONNXRUNTIME_INCLUDE_DIR}"
-)
-
-target_link_libraries(
-    memory_benchmark_cpp
-    PRIVATE
-    "${ONNXRUNTIME_LIBRARY}"
-)
-
-set(
-    NLOHMANN_JSON_ROOT
-    "/opt/homebrew/opt/nlohmann-json"
-    CACHE PATH
-    "nlohmann-json installation directory"
-)
+# ---------------------------------------------------------
+# nlohmann-json
+# ---------------------------------------------------------
 
 find_path(
     NLOHMANN_JSON_INCLUDE_DIR
-    nlohmann/json.hpp
-    PATHS "${NLOHMANN_JSON_ROOT}/include"
+    NAMES
+        nlohmann/json.hpp
+    HINTS
+        "${NLOHMANN_JSON_ROOT}"
+        "$ENV{NLOHMANN_JSON_ROOT}"
+    PATH_SUFFIXES
+        include
     REQUIRED
 )
+
+
+add_library(
+    nlohmann_json_external
+    INTERFACE
+)
+
+target_include_directories(
+    nlohmann_json_external
+    INTERFACE
+    "${NLOHMANN_JSON_INCLUDE_DIR}"
+)
+
+
+# ---------------------------------------------------------
+# Preprocessing library
+# ---------------------------------------------------------
 
 add_library(
     preprocessor
@@ -120,8 +176,66 @@ target_include_directories(
     preprocessor
     PUBLIC
     "${CMAKE_CURRENT_SOURCE_DIR}/include"
-    "${NLOHMANN_JSON_INCLUDE_DIR}"
 )
+
+target_link_libraries(
+    preprocessor
+    PUBLIC
+    nlohmann_json_external
+)
+
+
+# ---------------------------------------------------------
+# Executables
+# ---------------------------------------------------------
+
+add_executable(
+    onnx_smoke_test
+    src/onnx_smoke_test.cpp
+)
+
+target_link_libraries(
+    onnx_smoke_test
+    PRIVATE
+    onnxruntime_external
+)
+
+
+add_executable(
+    inference
+    src/inference.cpp
+)
+
+target_link_libraries(
+    inference
+    PRIVATE
+    onnxruntime_external
+)
+
+
+add_executable(
+    benchmark_cpp
+    src/benchmark.cpp
+)
+
+target_link_libraries(
+    benchmark_cpp
+    PRIVATE
+    onnxruntime_external
+)
+
+
+add_executable(
+    memory_benchmark_cpp
+    src/memory_benchmark.cpp
+)
+
+target_link_libraries(
+    memory_benchmark_cpp
+    PRIVATE
+    onnxruntime_external
+)
+
 
 add_executable(
     preprocessor_smoke_test
@@ -134,41 +248,32 @@ target_link_libraries(
     preprocessor
 )
 
+
 add_executable(
     inference_end_to_end
     src/inference_end_to_end.cpp
-)
-
-target_include_directories(
-    inference_end_to_end
-    PRIVATE
-    "${ONNXRUNTIME_INCLUDE_DIR}"
 )
 
 target_link_libraries(
     inference_end_to_end
     PRIVATE
     preprocessor
-    "${ONNXRUNTIME_LIBRARY}"
+    onnxruntime_external
 )
+
 
 add_executable(
     benchmark_end_to_end
     src/benchmark_end_to_end.cpp
 )
 
-target_include_directories(
-    benchmark_end_to_end
-    PRIVATE
-    "${ONNXRUNTIME_INCLUDE_DIR}"
-)
-
 target_link_libraries(
     benchmark_end_to_end
     PRIVATE
     preprocessor
-    "${ONNXRUNTIME_LIBRARY}"
+    onnxruntime_external
 )
+
 
 add_executable(
     benchmark_preprocessor
@@ -179,4 +284,24 @@ target_link_libraries(
     benchmark_preprocessor
     PRIVATE
     preprocessor
+)
+
+
+# ---------------------------------------------------------
+# Configuration summary
+# ---------------------------------------------------------
+
+message(
+    STATUS
+    "ONNX Runtime include: ${ONNXRUNTIME_INCLUDE_DIR}"
+)
+
+message(
+    STATUS
+    "ONNX Runtime library: ${ONNXRUNTIME_LIBRARY}"
+)
+
+message(
+    STATUS
+    "nlohmann-json include: ${NLOHMANN_JSON_INCLUDE_DIR}"
 )
