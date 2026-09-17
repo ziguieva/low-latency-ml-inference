@@ -151,3 +151,21 @@ target_link_libraries(
     preprocessor
     "${ONNXRUNTIME_LIBRARY}"
 )
+
+add_executable(
+    benchmark_end_to_end
+    src/benchmark_end_to_end.cpp
+)
+
+target_include_directories(
+    benchmark_end_to_end
+    PRIVATE
+    "${ONNXRUNTIME_INCLUDE_DIR}"
+)
+
+target_link_libraries(
+    benchmark_end_to_end
+    PRIVATE
+    preprocessor
+    "${ONNXRUNTIME_LIBRARY}"
+)
