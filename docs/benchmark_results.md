@@ -48,3 +48,20 @@ PyTorch and ONNX Runtime were validated on 1,000 samples.
 - Mean absolute error: 1.44e-8
 - Tolerance: 1e-5
 - Result: PASS
+## End-to-End C++ Inference
+
+The end-to-end benchmark measures the complete native C++ inference path:
+
+`Raw transaction -> C++ preprocessing -> ONNX tensor -> ONNX Runtime -> probability`
+
+Dataset loading, contract loading, and model initialization are excluded from the timed section.
+
+| Metric | ONNX Runtime C++ only | C++ End-to-End |
+|---|---:|---:|
+| Mean latency | 2.093 µs | 2.239 µs |
+| P50 | 2.083 µs | 2.250 µs |
+| P95 | 2.167 µs | 2.334 µs |
+| P99 | 2.458 µs | 2.500 µs |
+| Throughput | 477,816 inf/s | 446,667 inf/s |
+
+The native preprocessing and tensor preparation add approximately 0.146 µs to the mean latency, corresponding to about 7% overhead compared with ONNX Runtime inference alone.
