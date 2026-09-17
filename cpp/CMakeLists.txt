@@ -6,6 +6,8 @@ set(CMAKE_CXX_STANDARD 17)
 set(CMAKE_CXX_STANDARD_REQUIRED ON)
 set(CMAKE_CXX_EXTENSIONS OFF)
 
+include(CTest)
+
 
 # ---------------------------------------------------------
 # Optional installation hints
@@ -186,7 +188,7 @@ target_link_libraries(
 
 
 # ---------------------------------------------------------
-# Executables
+# ONNX Runtime smoke test
 # ---------------------------------------------------------
 
 add_executable(
@@ -200,6 +202,17 @@ target_link_libraries(
     onnxruntime_external
 )
 
+if(BUILD_TESTING)
+    add_test(
+        NAME onnx_runtime_smoke
+        COMMAND onnx_smoke_test
+    )
+endif()
+
+
+# ---------------------------------------------------------
+# ONNX inference
+# ---------------------------------------------------------
 
 add_executable(
     inference
@@ -213,6 +226,10 @@ target_link_libraries(
 )
 
 
+# ---------------------------------------------------------
+# ONNX Runtime C++ benchmark
+# ---------------------------------------------------------
+
 add_executable(
     benchmark_cpp
     src/benchmark.cpp
@@ -224,6 +241,10 @@ target_link_libraries(
     onnxruntime_external
 )
 
+
+# ---------------------------------------------------------
+# C++ memory benchmark
+# ---------------------------------------------------------
 
 add_executable(
     memory_benchmark_cpp
@@ -237,6 +258,10 @@ target_link_libraries(
 )
 
 
+# ---------------------------------------------------------
+# Preprocessor smoke test
+# ---------------------------------------------------------
+
 add_executable(
     preprocessor_smoke_test
     src/preprocessor_smoke_test.cpp
@@ -248,6 +273,10 @@ target_link_libraries(
     preprocessor
 )
 
+
+# ---------------------------------------------------------
+# End-to-end inference
+# ---------------------------------------------------------
 
 add_executable(
     inference_end_to_end
@@ -262,6 +291,10 @@ target_link_libraries(
 )
 
 
+# ---------------------------------------------------------
+# End-to-end benchmark
+# ---------------------------------------------------------
+
 add_executable(
     benchmark_end_to_end
     src/benchmark_end_to_end.cpp
@@ -274,6 +307,10 @@ target_link_libraries(
     onnxruntime_external
 )
 
+
+# ---------------------------------------------------------
+# Native preprocessing benchmark
+# ---------------------------------------------------------
 
 add_executable(
     benchmark_preprocessor
