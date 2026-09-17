@@ -116,7 +116,6 @@ find_library(
     REQUIRED
 )
 
-
 add_library(
     onnxruntime_external
     INTERFACE
@@ -150,7 +149,6 @@ find_path(
         include
     REQUIRED
 )
-
 
 add_library(
     nlohmann_json_external
@@ -259,7 +257,7 @@ target_link_libraries(
 
 
 # ---------------------------------------------------------
-# Preprocessor smoke test
+# Preprocessor parity test
 # ---------------------------------------------------------
 
 add_executable(
@@ -272,6 +270,15 @@ target_link_libraries(
     PRIVATE
     preprocessor
 )
+
+if(BUILD_TESTING)
+    add_test(
+        NAME preprocessing_parity
+        COMMAND
+            preprocessor_smoke_test
+            "${CMAKE_CURRENT_SOURCE_DIR}/../tests/fixtures/inference_contract_test.json"
+    )
+endif()
 
 
 # ---------------------------------------------------------

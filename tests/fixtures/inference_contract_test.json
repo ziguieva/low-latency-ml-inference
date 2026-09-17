@@ -1,0 +1,59 @@
+{
+  "model": {
+    "type": "FraudMLP",
+    "input_dimension": 19,
+    "threshold": 0.986
+  },
+  "raw_features": {
+    "categorical": [
+      "persona",
+      "remittance_category"
+    ],
+    "scaled_numeric": [
+      "amount",
+      "hour_of_day",
+      "day_of_week",
+      "time_since_last_txn"
+    ],
+    "binary": [
+      "is_weekend",
+      "is_new_beneficiary"
+    ]
+  },
+  "preprocessing": {
+    "missing_value": {
+      "time_since_last_txn": -1.0
+    },
+    "categories": {
+      "persona": [
+        "business",
+        "employee",
+        "retiree",
+        "student"
+      ],
+      "remittance_category": [
+        "grocery",
+        "other",
+        "rent",
+        "salary",
+        "shopping",
+        "subscription",
+        "supplier",
+        "transfer",
+        "utility"
+      ]
+    },
+    "scaler_mean": {
+      "amount": 3181.4739541955314,
+      "hour_of_day": 13.822403166857736,
+      "day_of_week": 2.695599300173215,
+      "time_since_last_txn": 166548.35974341136
+    },
+    "scaler_scale": {
+      "amount": 7575.297667778302,
+      "hour_of_day": 3.546310621615429,
+      "day_of_week": 1.8997584191214776,
+      "time_since_last_txn": 193812.78011284757
+    }
+  }
+}
