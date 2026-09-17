@@ -169,3 +169,14 @@ target_link_libraries(
     preprocessor
     "${ONNXRUNTIME_LIBRARY}"
 )
+
+add_executable(
+    benchmark_preprocessor
+    src/benchmark_preprocessor.cpp
+)
+
+target_link_libraries(
+    benchmark_preprocessor
+    PRIVATE
+    preprocessor
+)
